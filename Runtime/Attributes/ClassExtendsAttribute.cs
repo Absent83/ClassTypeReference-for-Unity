@@ -27,7 +27,7 @@
         public override bool IsConstraintSatisfied(Type type)
         {
             return base.IsConstraintSatisfied(type)
-                   && BaseType.IsAssignableFrom(type) && type != BaseType;
+                   && BaseType.IsAssignableFrom(type);
         }
     }
 }
