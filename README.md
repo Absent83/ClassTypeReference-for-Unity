@@ -1,9 +1,9 @@
 README
 ======
 
-A class which provides serializable references to `System.Type` of classes with an accompanying custom property drawer which allows class selection from drop-down.
+A class that provides serializable references to `System.Type` of classes with an accompanying custom property drawer which allows class selection from drop-down.
 
-![screenshot](https://bitbucket.org/rotorz/classtypereference-for-unity/raw/master/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/SolidAlloy/ClassTypeReference-for-Unity/master/.screenshot.png)
 
 Whilst we have not encountered any platform specific issues yet, the source code in this repository *might* not necessarily work for all of Unity's platforms or build configurations. It would be greatly appreciated if people would report issues using the [issue tracker](https://github.com/SolidAlloy/ClassTypeReference-for-Unity/issues).
 
@@ -15,7 +15,7 @@ Project supports Unity Package Manager. To install the project as a Git package 
 
 1. In Unity, open **Window** -> **Package Manager**.
 2. Press the **+** button, choose "**Add package from git URL...**"
-3. Enter "https://github.com/SolidAlloy/ClassTypeReference-for-Unity.git#upm" and press **Add**.
+3. Enter "https://github.com/SolidAlloy/ClassTypeReference-for-Unity.git" and press **Add**.
 
 Usage Examples
 --------------
@@ -26,7 +26,8 @@ Type references can be made using the inspector simply by using `ClassTypeRefere
 using UnityEngine;
 using TypeReferences;
 
-public class ExampleBehaviour : MonoBehaviour {
+public class ExampleBehaviour : MonoBehaviour
+{
     public ClassTypeReference greetingLoggerType;
 }
 ```
@@ -43,7 +44,8 @@ You can apply one of two attributes to drastically reduce the number of types pr
 using UnityEngine;
 using TypeReferences;
 
-public class ExampleBehaviour : MonoBehaviour {
+public class ExampleBehaviour : MonoBehaviour
+{
     // Allow selection of classes that implement an interface.
     [ClassImplements(typeof(IGreetingLogger))]
     public ClassTypeReference greetingLoggerType;
@@ -61,15 +63,19 @@ using System;
 using UnityEngine;
 using TypeReferences;
 
-public class ExampleBehaviour : MonoBehaviour {
+public class ExampleBehaviour : MonoBehaviour
+{
     [ClassImplements(typeof(IGreetingLogger))]
     public ClassTypeReference greetingLoggerType = typeof(DefaultGreetingLogger);
 
-    private void Start() {
-        if (greetingLoggerType.Type == null) {
+    private void Start()
+    {
+        if (greetingLoggerType.Type == null)
+        {
             Debug.LogWarning("No type of greeting logger was specified.");
         }
-        else {
+        else
+        {
             var greetingLogger = Activator.CreateInstance(greetingLoggerType) as IGreetingLogger;
             greetingLogger.LogGreeting();
         }
@@ -77,7 +83,7 @@ public class ExampleBehaviour : MonoBehaviour {
 }
 ```
 
-Presentation of drop-down list can be customized by supplying a `ClassGrouping` value to either of the attributes `ClassImplements` or `ClassExtends`.
+Presentation of drop-down list can be customized by supplying a `ClassGrouping` value to any of the attributes: `ClassTypeConstraint`,  `ClassImplements` or `ClassExtends`.
 
 - **ClassGrouping.None** - No grouping, just show type names in a list; for instance, "Some.Nested.Namespace.SpecialClass".
 
@@ -93,17 +99,50 @@ For instance,
 using UnityEngine;
 using TypeReferences;
 
-public class ExampleBehaviour : MonoBehaviour {
+public class ExampleBehaviour : MonoBehaviour
+{
     [ClassImplements(typeof(IGreetingLogger), Grouping = ClassGrouping.ByAddComponentMenu)]
     public ClassTypeReference greetingLoggerType;
 }
 ```
 
-Credits
-------------
 
-- [Original creator of the repo](https://bitbucket.org/rotorz)
-- GitHub action to split the upm branch was created by [rfadeev](https://github.com/rfadeev)
+
+You can exclude **(None)** so that no one can choose it from the dropdown. Use it with any of the attributes like this:
+
+```csharp
+using UnityEngine;
+using TypeReferences;
+
+public class ExampleBehaviour : MonoBehaviour
+{
+    [ClassTypeConstraint(ExcludeNone = true)]
+    public ClassTypeReference someTypeExample;
+}
+```
+
+Note that the type can still be null by default or if set through code.
+
+
+
+You can include or exclude certain types from the drop-down list:
+
+```csharp
+using UnityEngine;
+using TypeReferences;
+
+public class ExampleBehaviour: MonoBehaviour
+{
+    [ClassExtends(
+        typeof(MonoBehaviour),
+        IncludeTypes = new[] { typeof(ScriptableObject) },
+        ExcludeTypes = new[] { typeof(ExampleBehaviour), typeof(BadBehaviour) },
+    )]
+    public ClassTypeReference mostlyMonoBehaviourType;
+}
+```
+
+
 
 Contribution Agreement
 ----------------------
